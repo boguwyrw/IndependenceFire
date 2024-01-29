@@ -35,6 +35,24 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""BodyRotation"",
+                    ""type"": ""Value"",
+                    ""id"": ""1cbba89f-117d-4fd8-85c8-d8917e7096de"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""HeadRotation"",
+                    ""type"": ""Value"",
+                    ""id"": ""3d027f2c-8893-482b-a2ed-95b81d17ec28"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -202,6 +220,50 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""773d19ce-b718-47a8-b74a-1df7226c423c"",
+                    ""path"": ""<Mouse>/delta/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BodyRotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""338344e9-5288-492d-a3d8-172df95d433d"",
+                    ""path"": ""<Gamepad>/rightStick/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BodyRotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""76a9e28e-f892-419a-bf9c-888eff81da4f"",
+                    ""path"": ""<Mouse>/delta/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HeadRotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6ffe8866-3460-4314-8d09-8bf30b213582"",
+                    ""path"": ""<Gamepad>/rightStick/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""HeadRotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -211,6 +273,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
+        m_Player_BodyRotation = m_Player.FindAction("BodyRotation", throwIfNotFound: true);
+        m_Player_HeadRotation = m_Player.FindAction("HeadRotation", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -273,11 +337,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Movement;
+    private readonly InputAction m_Player_BodyRotation;
+    private readonly InputAction m_Player_HeadRotation;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
         public PlayerActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_Player_Movement;
+        public InputAction @BodyRotation => m_Wrapper.m_Player_BodyRotation;
+        public InputAction @HeadRotation => m_Wrapper.m_Player_HeadRotation;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -290,6 +358,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Movement.started += instance.OnMovement;
             @Movement.performed += instance.OnMovement;
             @Movement.canceled += instance.OnMovement;
+            @BodyRotation.started += instance.OnBodyRotation;
+            @BodyRotation.performed += instance.OnBodyRotation;
+            @BodyRotation.canceled += instance.OnBodyRotation;
+            @HeadRotation.started += instance.OnHeadRotation;
+            @HeadRotation.performed += instance.OnHeadRotation;
+            @HeadRotation.canceled += instance.OnHeadRotation;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -297,6 +371,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Movement.started -= instance.OnMovement;
             @Movement.performed -= instance.OnMovement;
             @Movement.canceled -= instance.OnMovement;
+            @BodyRotation.started -= instance.OnBodyRotation;
+            @BodyRotation.performed -= instance.OnBodyRotation;
+            @BodyRotation.canceled -= instance.OnBodyRotation;
+            @HeadRotation.started -= instance.OnHeadRotation;
+            @HeadRotation.performed -= instance.OnHeadRotation;
+            @HeadRotation.canceled -= instance.OnHeadRotation;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -317,5 +397,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     public interface IPlayerActions
     {
         void OnMovement(InputAction.CallbackContext context);
+        void OnBodyRotation(InputAction.CallbackContext context);
+        void OnHeadRotation(InputAction.CallbackContext context);
     }
 }
